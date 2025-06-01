@@ -45,4 +45,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['filter'] ?? null, function ($query, $filter) {
+            if ($filter === 'only') {
+                $query->onlyTrashed();
+            }
+        });
+    }
 }

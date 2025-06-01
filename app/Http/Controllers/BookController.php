@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class BookController extends Controller
@@ -13,14 +16,18 @@ class BookController extends Controller
      */
     public function index()
     {
-        //
-        // $books = Book::all();
+        // $user = Auth::getRememberTokenName();
+        $data = Blog::query()
+            ->orderBy('created_at', 'DESC')
+            ->whereNull('deleted_at')->get();
+
+    $user = DB::table('users')->get();
+    dd($user);
+        $user = Auth::user();
         return Inertia::render('Welcome', [
-       "auth" => [
-         'name' => 'John Doe',
-        'age' => 30,
-       ]
-    ]);
+            "auth" => $user,
+            "data" => $data
+        ]);
     }
 
     /**
@@ -29,7 +36,7 @@ class BookController extends Controller
     public function create()
     {
         //$this-
-        return view('books.create');
+        return Inertia::render('Books/Create');
     }
 
     /**
@@ -38,7 +45,7 @@ class BookController extends Controller
     public function store(Request $request)
     {
         //
-        $request-> validate([
+        $request->validate([
             'title' => 'required',
             'author' => 'required',
             'description' => 'nullable'
